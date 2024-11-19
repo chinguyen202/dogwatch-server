@@ -1,0 +1,11 @@
+# node
+node_modules
+package-lock.json
+.env
+.DS_Store
+.vscode/
+
+# ignore content of uploads folder
+src/uploads/*
+# except one (empty) file to have the folder in version control
+!src/uploads/.gitkeep
