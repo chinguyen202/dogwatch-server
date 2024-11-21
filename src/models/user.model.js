@@ -67,6 +67,10 @@ const User = sequelize.define(
           args: true,
           msg: 'Password can not be empty',
         },
+        len: {
+          args: [4, 100],
+          msg: 'Must be between 4 and 100 characters',
+        },
       },
     },
     role: {
@@ -100,10 +104,22 @@ const User = sequelize.define(
     headline: {
       type: DataTypes.TEXT,
       allowNull: true,
+      validate: {
+        len: {
+          args: [4, 150],
+          msg: 'Must be between 4 and 150 characters',
+        },
+      },
     },
     description: {
       type: DataTypes.TEXT,
       allowNull: true,
+      validate: {
+        len: {
+          args: [4, 1000],
+          msg: 'Must be between 4 and 1000 characters',
+        },
+      },
     },
   },
   {

@@ -22,23 +22,15 @@ const logIn = async (req, res) => {
     if (!match) return res.status(400).json({ message: 'Incorrect password' });
 
     // generate a signed son web token with some of the contents of user object and return it in the response
-    const userInfo = {
-      uuid: user.uuid,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      role: user.role,
-      location: user.location,
-      avatar: user.avatar,
-      bio: user.bio,
-      description: user.description,
-    };
+    const token = jwt.sign(
+      { userId: user.uuid, role: user.role },
+      process.env.SECRET,
+      {
+        expiresIn: '1h',
+      }
+    );
 
-    const token = jwt.sign(userInfo, process.env.SECRET, {
-      expiresIn: '1h',
-    });
-
-    res.status(200).json({ token, user }); //TODO: remove user from response
+    res.status(200).json({ token, userId: user.uuid, role: user.role });
   } catch (error) {
     console.log(`Error when trying to log in`);
     res.status(500).json({ message: error.message });
@@ -46,11 +38,6 @@ const logIn = async (req, res) => {
 };
 
 // User logout
-const logOut = (req, res) => {
-  req.user.destroy((error) => {
-    if (error) return res.status(400).json({ message: "Can't log out" });
-    res.status(200).json({ message: 'Logout successfully!' });
-  });
-};
+const logOut = (req, res) => {};
 
 module.exports = { logIn, logOut };

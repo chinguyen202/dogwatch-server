@@ -12,6 +12,7 @@ const verifyToken = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
+    console.log(error);
     res.status(403).json({ message: 'Forbidden access when verify token' });
   }
 };
@@ -51,7 +52,6 @@ const sitterOnly = async (req, res, next) => {
 // Check if user is owner
 const ownerOnly = async (req, res, next) => {
   try {
-    console.log(`Role is ${req.user.role}`);
     if (req.user.role !== 'owner')
       return res
         .status(403)

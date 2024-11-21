@@ -1,12 +1,11 @@
+const { where } = require('sequelize');
 const { Booking, User, Service } = require('../../models/index');
 
-// Create a booking ( done by log in user who is dog owner)
+/** Create a booking ( done by log in user who is dog owner) */
 const createBooking = async (req, res) => {
   const { startDate, endDate, location, serviceId, sitterId } = req.body;
-  const logInUser = req.user;
-  const ownerId = logInUser.uuid;
-  console.log(`OwnerId is ${ownerId}`);
-  console.log(`Log in user : ${logInUser}`);
+  const logInUserId = req.user.userId;
+
   try {
     // Find the sitter
     const sitter = await User.findOne({
@@ -27,29 +26,38 @@ const createBooking = async (req, res) => {
 
     // If the service is offer by the sitter
     if (!offeredServiceIds.includes(serviceId))
-      return res.status(400).json({
+      return res.status(404).json({
         message: `Sitter ${sitter.firstName} does not offer selected service`,
       });
 
-    // Create a booking request
-    const newBooking = await Booking.create({
-      startDate,
-      endDate,
-      location,
-      serviceId,
-      sitterId,
-      ownerId,
+    // Create a booking request if there is not a booking with same time with same dog sitter
+    await Booking.findOrCreate({
+      where: {
+        startDate,
+        endDate,
+        serviceId,
+        sitterId,
+        ownerId: logInUserId,
+      },
+      defaults: {
+        location, // This doesn't need to be unique
+      },
+    }).then((booking, isCreated) => {
+      if (!isCreated)
+        return res.status(400).json({ message: 'Booking is already exist' });
+      res.status(201).json({ message: 'Create booking successfully', booking });
     });
-    res.status(201).json(newBooking);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// Update booking status (accept or denied - done by sitter)
+/** Update booking status (accept or denied - done by sitter || cancel - done by owner)  */
 const updateBookingStatus = async (req, res) => {
-  console.log(`User role is ${req.user.role}`);
-  const { status } = req.body;
+  // Get the role of the request user
+  const { role } = req.user;
+  let allowedStatuses = [];
+
   try {
     // Find the booking from the database
     const booking = await Booking.findOne({
@@ -59,17 +67,24 @@ const updateBookingStatus = async (req, res) => {
     });
     // If the booking is not found
     if (!booking)
-      return res.status(400).json({ message: 'Booking is not found' });
-    // Not allow to update status when the booking is completed or has been denied or new status is
-    if (booking.status === 'denied' || booking.status === 'completed')
-      return res
-        .status(400)
-        .json(
-          'Completed booking or denied booking is not allowed to update status'
-        );
+      return res.status(404).json({ message: 'Booking is not found' });
+    // Check the booking's current status
+    const updatedStatus = req.body.status.toLowerCase();
+    const canUpdate = booking.status === 'pending';
+    // Check role of request user and update the allowed status based on user's role
+    if (role === 'sitter') {
+      allowedStatuses = ['confirmed', 'denied'];
+    } else if (role === 'owner') {
+      allowedStatuses = ['cancelled'];
+    }
+    if (!canUpdate || !allowedStatuses.includes(updatedStatus))
+      return res.status(400).json({
+        message: `You are not allowed to update booking status to ${updatedStatus}`,
+      });
+
     // Update status of the booking
     await booking.update({
-      status: status,
+      status: updatedStatus,
     });
     await booking.save();
     res.status(201).json({ message: 'Status updated successfully!' });
@@ -87,7 +102,7 @@ const getMyBookings = async (req, res) => {
     if (logInUser.role === 'owner') {
       const bookings = await Booking.findAll({
         where: {
-          ownerId: logInUser.uuid,
+          ownerId: logInUser.userId,
         },
       });
       res.status(200).json(bookings);
@@ -96,7 +111,7 @@ const getMyBookings = async (req, res) => {
     if (logInUser.role === 'sitter') {
       const bookings = await Booking.findAll({
         where: {
-          sitterId: logInUser.uuid,
+          sitterId: logInUser.userId,
         },
       });
       res.status(200).json(bookings);
@@ -106,4 +121,24 @@ const getMyBookings = async (req, res) => {
   }
 };
 
-module.exports = { createBooking, updateBookingStatus, getMyBookings };
+// Return confirmed bookings of a sitter
+const getConfirmedBookings = async (req, res) => {
+  try {
+    const result = await Booking.findAll({
+      where: {
+        sitterId: req.params.sitterId,
+        status: 'confirmed',
+      },
+    });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  createBooking,
+  updateBookingStatus,
+  getMyBookings,
+  getConfirmedBookings,
+};

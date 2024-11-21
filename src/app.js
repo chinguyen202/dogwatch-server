@@ -16,8 +16,11 @@ dotenv.config();
 const app = express();
 
 // Middlewares
-app.use(cors()); // enable CORS = This is CORS-enabled for all origins! Need to change later
 app.use(express.json()); // parse json
+app.use(express.static('uploads'));
+app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+
+app.use(cors()); // TODO: enable CORS = This is CORS-enabled for all origins! Need to change later
 
 // Routes
 app.use(authRouter);

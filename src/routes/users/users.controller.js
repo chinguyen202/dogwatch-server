@@ -1,5 +1,6 @@
-const { User } = require('../../models/index');
 const argon2 = require('argon2');
+const jwt = require('jsonwebtoken');
+const { User, Review, Service } = require('../../models/index');
 
 // Get all sitters
 const getSitters = async (req, res) => {
@@ -18,13 +19,23 @@ const getSitters = async (req, res) => {
   }
 };
 
-// Get a specific user
+// Get a specific user with their received reviews and services offered
 const getUserById = async (req, res) => {
   try {
     const response = await User.findOne({
       where: {
         uuid: req.params.id,
       },
+      include: [
+        {
+          model: Review,
+          as: 'receivedReviews',
+        },
+        {
+          model: Service,
+          through: { attributes: [] },
+        },
+      ],
       attributes: {
         exclude: ['password'], // Excludes the 'password' field from the response
       },
@@ -40,7 +51,7 @@ const createUser = async (req, res) => {
   const { firstName, lastName, email, password, role, location } = req.body;
   const hashPassword = await argon2.hash(password);
   try {
-    await User.create({
+    const user = await User.create({
       firstName: firstName,
       lastName: lastName,
       email: email,
@@ -51,7 +62,21 @@ const createUser = async (req, res) => {
       headline: null,
       description: null,
     });
-    res.status(201).json({ message: 'Register success' });
+
+    const token = jwt.sign(
+      { userId: user.uuid, role: user.role },
+      process.env.SECRET,
+      {
+        expiresIn: '1h',
+      }
+    );
+
+    res.status(201).json({
+      message: 'Register success',
+      token,
+      userId: user.uuid,
+      role: user.role,
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -62,9 +87,11 @@ const updateUser = async (req, res) => {
   try {
     // Get login user by token
     const loginUser = req.user;
+    console.log(loginUser);
+
     const updatedUser = await User.findOne({
       where: {
-        uuid: loginUser.uuid,
+        uuid: loginUser.userId,
       },
     });
 
@@ -90,16 +117,11 @@ const updateUser = async (req, res) => {
 
 // Update password
 const updatePassword = async (req, res) => {
-  if (req.body.newPassword !== req.body.confirmPassword)
-    return res
-      .status(400)
-      .json({ message: "New password and confirmed password doesn't match" });
-
   try {
     const loginUser = req.user;
     const updatedUser = await User.findOne({
       where: {
-        uuid: loginUser.uuid,
+        uuid: loginUser.userId,
       },
     });
     // Compare password and send error message
@@ -109,12 +131,44 @@ const updatePassword = async (req, res) => {
     );
     if (!match)
       return res.status(400).json({ message: 'Incorrect current password' });
+    // Has new password and update it
     const newHashPassword = await argon2.hash(req.body.newPassword);
     await updatedUser.update({
       password: newHashPassword,
     });
     await updatedUser.save();
     res.status(201).json({ message: 'Password is updated' });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Search for sitter using service, location and rating
+const searchForSitters = async (req, res) => {
+  const { serviceId, location, rating } = req.body;
+  try {
+    const result = await User.findAll({
+      where: {
+        location: location,
+      },
+      include: [
+        {
+          model: Review,
+          as: 'receivedReviews',
+          where: {
+            rating: rating,
+          },
+        },
+        {
+          model: Service,
+          through: { attributes: [] },
+          where: {
+            uuid: serviceId,
+          },
+        },
+      ],
+    });
+    res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -147,4 +201,5 @@ module.exports = {
   updateUser,
   deleteUser,
   updatePassword,
+  searchForSitters,
 };

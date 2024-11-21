@@ -8,10 +8,10 @@ const {
   updateUser,
   deleteUser,
   updatePassword,
+  searchForSitters,
 } = require('./users.controller');
 const {
   getServicesByUserId,
-  addServiceToSitter,
   updateServiceByUserId,
 } = require('../services/services.controller');
 const {
@@ -34,22 +34,36 @@ const upload = multer({ dest: 'src/uploads/' }, fileFilter);
 
 const userRouter = express.Router();
 
-userRouter.get('/api/v1/users', getSitters);
-userRouter.get('/api/v1/users/:id', getUserById);
+/**  Managing user information */
+// Create a new user
 userRouter.post('/api/v1/register', createUser);
+// Update user info
 userRouter.put(
   '/api/v1/users/:id',
   verifyToken,
   upload.single('avatar'),
   updateUser
 );
-userRouter.delete('/api/v1/users/:id', adminOnly, deleteUser);
-// Add a service to the sitter by user ID
-// userRouter.post('/api/v1/users/:id/service', sitterOnly, addServiceToSitter);
-// Get services by user ID
-userRouter.get('/api/v1/users/:id/service', getServicesByUserId);
-//Update services to the sitter by user ID
-userRouter.post('/api/v1/users/:id/service', sitterOnly, updateServiceByUserId);
 // Change password
-userRouter.put('/api/v1/users/:id/password', verifyToken, updatePassword);
+userRouter.patch('/api/v1/users/:id', verifyToken, updatePassword);
+//Update services to the sitter by user ID
+userRouter.post(
+  '/api/v1/users/:id/services',
+  verifyToken,
+  sitterOnly,
+  updateServiceByUserId
+);
+
+/** Getting user info */
+// Get all the sitters on the database
+userRouter.get('/api/v1/sitters', getSitters);
+// Get the user by id
+userRouter.get('/api/v1/users/:id', getUserById);
+// Get services by user ID
+userRouter.get('/api/v1/users/:id/services', getServicesByUserId);
+
+/** Search */
+userRouter.post('/api/v1/search', searchForSitters);
+userRouter.delete('/api/v1/users/:id', adminOnly, deleteUser);
+
 module.exports = userRouter;

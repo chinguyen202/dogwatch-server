@@ -4,20 +4,19 @@ const {
   createBooking,
   updateBookingStatus,
 } = require('./bookings.controller');
-const {
-  ownerOnly,
-  sitterOnly,
-  verifyToken,
-} = require('../auth/auth.middleware');
+const { verifyToken } = require('../auth/auth.middleware');
 
 const bookingRouter = express.Router();
 
+/** Routes related to booking */
+// Get all of log in user's bookings
 bookingRouter.get('/api/v1/bookings', verifyToken, getMyBookings);
-bookingRouter.post('/api/v1/bookings', verifyToken, ownerOnly, createBooking);
-bookingRouter.put(
+// Create a booking request, allowed to perform by dog owner only
+bookingRouter.post('/api/v1/bookings', verifyToken, createBooking);
+// Update booking status
+bookingRouter.patch(
   '/api/v1/bookings/:bookingId',
   verifyToken,
-  sitterOnly,
   updateBookingStatus
 );
 
