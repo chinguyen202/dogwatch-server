@@ -105,8 +105,11 @@ const updateBookingStatus = async (req, res) => {
 // Why is the database date is not working
 const setBookingsToCompleted = async (req, res, next) => {
   const loginUser = req.user;
+  const today = new Date();
+  const formattedDate = today.toISOString().slice(0, 19).replace('T', ' ');
+
   const updatedField = loginUser.role === 'owner' ? 'ownerId' : 'sitterId';
-  console.log(new DATE());
+  console.log(formattedDate);
 
   try {
     await Booking.update(
@@ -116,7 +119,7 @@ const setBookingsToCompleted = async (req, res, next) => {
           status: 'confirmed',
           [updatedField]: loginUser.userId,
           endDate: {
-            [Op.lte]: new DATE(), // Compare endDate with the current date
+            [Op.lte]: formattedDate, // Compare endDate with the current date
           },
         },
       }

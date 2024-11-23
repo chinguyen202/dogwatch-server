@@ -18,8 +18,10 @@ const app = express();
 
 // Middlewares
 app.use(express.json()); // parse json
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Image uploads
-app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(express.static('src/uploads'));
+
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Image uploads
+// app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 app.use(cors()); // TODO: enable CORS = This is CORS-enabled for all origins! Need to change later
 
