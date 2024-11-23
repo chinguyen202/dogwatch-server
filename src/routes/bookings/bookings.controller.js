@@ -103,11 +103,10 @@ const updateBookingStatus = async (req, res) => {
 // Set the booking status completed by comparing today with the end date with confirmed bookings
 const setBookingsToCompleted = async (req, res, next) => {
   const loginUser = req.user;
-  const today = new Date();
-  const formattedDate = today.toISOString().slice(0, 19).replace('T', ' ');
+  const today = new Date().toISOString();
+  console.log(`TODAY IS ${today}`);
 
   const updatedField = loginUser.role === 'owner' ? 'ownerId' : 'sitterId';
-  console.log(formattedDate);
 
   try {
     await Booking.update(
@@ -117,7 +116,7 @@ const setBookingsToCompleted = async (req, res, next) => {
           status: 'confirmed',
           [updatedField]: loginUser.userId,
           endDate: {
-            [Op.lte]: formattedDate, // Compare endDate with the current date
+            [Op.lte]: today, // Compare endDate with the current date and time
           },
         },
       }
