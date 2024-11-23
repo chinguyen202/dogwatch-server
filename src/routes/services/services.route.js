@@ -13,9 +13,9 @@ const serviceRouter = express.Router();
 
 /** Manage create, edit, delete and create operation to services */
 // Get all the services available
-serviceRouter.get('/api/v1/services', verifyToken, getServices);
+serviceRouter.get('/api/v1/services', getServices);
 // Get one service by its id
-serviceRouter.get('/api/v1/services/:id', verifyToken, getServiceById);
+serviceRouter.get('/api/v1/services/:id', getServiceById);
 
 // Create a new service (admin only)
 serviceRouter.post('/api/v1/services', verifyToken, adminOnly, createService);

@@ -18,10 +18,6 @@ const Booking = sequelize.define(
           args: true,
           msg: 'Start date must be of date type',
         },
-        isAfter: {
-          args: NOW,
-          msg: 'Th start of booking can not be in the past',
-        },
       },
     },
     endDate: {
