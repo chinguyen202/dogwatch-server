@@ -1,4 +1,4 @@
-const { where, NOW, Op, DATE } = require('sequelize');
+const { where, Op } = require('sequelize');
 const { Booking, User, Service } = require('../../models/index');
 
 /** Create a booking ( done by log in user who is dog owner) */
@@ -100,9 +100,7 @@ const updateBookingStatus = async (req, res) => {
   }
 };
 
-// TODO: Complete the booking, somehow update the status of the booking automatically
-// Can make this called before user get their bookings
-// Why is the database date is not working
+// Set the booking status completed by comparing today with the end date with confirmed bookings
 const setBookingsToCompleted = async (req, res, next) => {
   const loginUser = req.user;
   const today = new Date();
@@ -136,24 +134,76 @@ const getMyBookings = async (req, res) => {
   const logInUser = req.user;
 
   try {
-    // In case the login user is the owner
+    // If the logged-in user is the owner
     if (logInUser.role === 'owner') {
       const bookings = await Booking.findAll({
         where: {
           ownerId: logInUser.userId,
         },
+        include: [
+          {
+            model: User,
+            as: 'sitter',
+            attributes: ['firstName', 'lastName'],
+          },
+          {
+            model: User,
+            as: 'owner',
+            attributes: ['firstName', 'lastName'],
+          },
+        ],
       });
       res.status(200).json(bookings);
     }
-    // In case the login user is the sitter
+    // If the logged-in user is the sitter
     if (logInUser.role === 'sitter') {
       const bookings = await Booking.findAll({
         where: {
           sitterId: logInUser.userId,
         },
+        include: [
+          {
+            model: User,
+            as: 'sitter',
+            attributes: ['firstName', 'lastName'],
+          },
+          {
+            model: User,
+            as: 'owner',
+            attributes: ['firstName', 'lastName'],
+          },
+        ],
       });
       res.status(200).json(bookings);
     }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get a booking by id
+const getBookingById = async (req, res) => {
+  try {
+    const result = await Booking.findOne({
+      where: {
+        uuid: req.params.bookingId,
+      },
+      include: [
+        {
+          model: User,
+          as: 'sitter',
+          attributes: ['firstName', 'lastName'],
+        },
+        {
+          model: User,
+          as: 'owner',
+          attributes: ['firstName', 'lastName'],
+        },
+      ],
+    });
+    if (!result)
+      return res.status(404).json({ message: "Can't find the booking" });
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -212,4 +262,5 @@ module.exports = {
   setBookingsToCompleted,
   getCompletedBookings,
   getPendingBookings,
+  getBookingById,
 };

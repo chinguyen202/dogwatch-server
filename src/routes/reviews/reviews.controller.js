@@ -19,6 +19,19 @@ const createReview = async (req, res) => {
       return res
         .status(400)
         .json({ message: 'Review is not allowed for unfinished booking.' });
+    // Check if there is review created already
+    const existingReview = await Review.findOne({
+      where: {
+        bookingId: booking.uuid,
+        reviewerId: loginUser.userId,
+      },
+    });
+    if (existingReview)
+      return res
+        .status(400)
+        .json({
+          message: 'You already reviewed this booking. Please edit it!',
+        });
     // Create the review
     // The login user is the one who create the review
     // If the login user is the owner in the booking, the reviewee is the dog sitter

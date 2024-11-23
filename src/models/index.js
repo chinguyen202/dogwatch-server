@@ -9,10 +9,10 @@ User.belongsToMany(Service, { through: 'User_Services' });
 Service.belongsToMany(User, { through: 'User_Services' });
 
 // User -> Booking association
-User.hasMany(Booking, { foreignKey: 'sitterId', as: 'Sitters' });
-User.hasMany(Booking, { foreignKey: 'ownerId', as: 'Owners' });
-Booking.belongsTo(User, { foreignKey: 'sitterId' });
-Booking.belongsTo(User, { foreignKey: 'ownerId' });
+User.hasMany(Booking, { foreignKey: 'sitterId' });
+User.hasMany(Booking, { foreignKey: 'ownerId' });
+Booking.belongsTo(User, { foreignKey: 'sitterId', as: 'sitter' });
+Booking.belongsTo(User, { foreignKey: 'ownerId', as: 'owner' });
 
 // Service -> Booking (Service can have many bookings)
 Service.hasMany(Booking, { foreignKey: 'serviceId' });

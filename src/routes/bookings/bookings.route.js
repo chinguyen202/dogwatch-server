@@ -7,6 +7,7 @@ const {
   getCompletedBookings,
   getPendingBookings,
   getConfirmedBookings,
+  getBookingById,
 } = require('./bookings.controller');
 const { verifyToken } = require('../auth/auth.middleware');
 
@@ -36,6 +37,9 @@ bookingRouter.get(
   verifyToken,
   getCompletedBookings
 );
+
+// Get a booking by its id
+bookingRouter.get('/api/v1/bookings/:bookingId', verifyToken, getBookingById);
 
 // Create a booking request, allowed to perform by dog owner only
 bookingRouter.post('/api/v1/bookings', verifyToken, createBooking);
