@@ -27,9 +27,11 @@ const createReview = async (req, res) => {
       rating: req.body.rating,
       comment: req.body.comment,
       bookingId: booking.uuid,
-      reviewerId: loginUser.uuid,
+      reviewerId: loginUser.userId,
       revieweeId:
-        loginUser.uuid === booking.ownerId ? booking.sitterId : booking.ownerId,
+        loginUser.userId === booking.ownerId
+          ? booking.sitterId
+          : booking.ownerId,
     });
     res.status(201).json(result);
   } catch (error) {
@@ -44,6 +46,7 @@ const editReview = async (req, res) => {
     const editReview = await Review.findOne({
       where: {
         uuid: req.params.reviewId,
+        reviewerId: loginUser.userId,
       },
     });
     await editReview.update({
@@ -62,7 +65,7 @@ const getMyReviews = async (req, res) => {
   try {
     const reviews = await Review.findAll({
       where: {
-        revieweeId: req.user.uuid,
+        revieweeId: req.user.userId,
       },
     });
     console.log(reviews);
