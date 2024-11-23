@@ -8,16 +8,25 @@ const verifyToken = (req, res, next) => {
   }
   const token = authHeader.split(' ')[1];
   try {
-    const decoded = jwt.verify(token, process.env.SECRET);
-    req.user = decoded;
-    next();
+    jwt.verify(token, process.env.SECRET, (err, decoded) => {
+      if (err) {
+        // Handle expired token
+        if (err.name === 'TokenExpiredError') {
+          return res
+            .status(401)
+            .json({ message: 'Token has expired. Please sign in again!' });
+        }
+        // Handle other token errors
+        return res.status(403).json({ message: 'Invalid token.' });
+      }
+      req.user = decoded;
+      next();
+    });
   } catch (error) {
     console.log(error);
     res.status(403).json({ message: 'Forbidden access when verify token' });
   }
 };
-
-// TODO: function to check token validity or renew token??? Handling case token is expired
 
 // Check if user is admin
 const adminOnly = async (req, res, next) => {
