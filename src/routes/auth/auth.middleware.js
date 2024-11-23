@@ -17,6 +17,8 @@ const verifyToken = (req, res, next) => {
   }
 };
 
+// TODO: function to check token validity or renew token??? Handling case token is expired
+
 // Check if user is admin
 const adminOnly = async (req, res, next) => {
   const authHeader = req.headers.authorization;

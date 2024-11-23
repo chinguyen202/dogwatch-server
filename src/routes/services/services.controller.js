@@ -23,6 +23,20 @@ const getServices = async (req, res) => {
   }
 };
 
+// Get a service by its id
+const getServiceById = async (req, res) => {
+  try {
+    const response = await Service.findOne({
+      where: {
+        uuid: req.params.id,
+      },
+    });
+    res.status(201).json(response);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Get all services of a sitter
 const getServicesByUserId = async (req, res) => {
   try {
@@ -107,4 +121,5 @@ module.exports = {
   updateService,
   deleteService,
   updateServiceByUserId,
+  getServiceById,
 };

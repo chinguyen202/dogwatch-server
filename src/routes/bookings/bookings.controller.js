@@ -1,4 +1,4 @@
-const { where } = require('sequelize');
+const { where, NOW, Op, DATE } = require('sequelize');
 const { Booking, User, Service } = require('../../models/index');
 
 /** Create a booking ( done by log in user who is dog owner) */
@@ -22,7 +22,6 @@ const createBooking = async (req, res) => {
 
     // Extract the names of the services the sitter offers
     const offeredServiceIds = sitter.services.map((service) => service.uuid);
-    console.log(`Type ${typeof offeredServiceIds}`);
 
     // If the service is offer by the sitter
     if (!offeredServiceIds.includes(serviceId))
@@ -30,23 +29,31 @@ const createBooking = async (req, res) => {
         message: `Sitter ${sitter.firstName} does not offer selected service`,
       });
 
-    // Create a booking request if there is not a booking with same time with same dog sitter
-    await Booking.findOrCreate({
+    // Checking if there is overlap booking
+    const existingBooking = await Booking.findOne({
       where: {
-        startDate,
-        endDate,
-        serviceId,
-        sitterId,
+        startDate: startDate,
+        endDate: endDate,
+        location: location,
+        sitterId: sitterId,
+        serviceId: serviceId,
         ownerId: logInUserId,
       },
-      defaults: {
-        location, // This doesn't need to be unique
-      },
-    }).then((booking, isCreated) => {
-      if (!isCreated)
-        return res.status(400).json({ message: 'Booking is already exist' });
-      res.status(201).json({ message: 'Create booking successfully', booking });
     });
+    if (existingBooking)
+      return res.status(400).json({
+        message: 'There is already a booking with the same time and sitter',
+      });
+    // Create a booking request if there is not a booking with same time with same dog sitter
+    const booking = await Booking.create({
+      startDate: startDate,
+      endDate: endDate,
+      location: location,
+      sitterId: sitterId,
+      serviceId: serviceId,
+      ownerId: logInUserId,
+    });
+    res.status(201).json({ message: 'Booking created successfully!', booking });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -90,6 +97,34 @@ const updateBookingStatus = async (req, res) => {
     res.status(201).json({ message: 'Status updated successfully!' });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+// TODO: Complete the booking, somehow update the status of the booking automatically
+// Can make this called before user get their bookings
+// Why is the database date is not working
+const setBookingsToCompleted = async (req, res, next) => {
+  const loginUser = req.user;
+  const updatedField = loginUser.role === 'owner' ? 'ownerId' : 'sitterId';
+  console.log(new DATE());
+
+  try {
+    await Booking.update(
+      { status: 'completed' },
+      {
+        where: {
+          status: 'confirmed',
+          [updatedField]: loginUser.userId,
+          endDate: {
+            [Op.lte]: new DATE(), // Compare endDate with the current date
+          },
+        },
+      }
+    );
+    next();
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Can't update the bookings" });
   }
 };
 
@@ -141,4 +176,5 @@ module.exports = {
   updateBookingStatus,
   getMyBookings,
   getConfirmedBookings,
+  setBookingsToCompleted,
 };

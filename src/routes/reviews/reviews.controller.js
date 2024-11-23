@@ -1,6 +1,7 @@
 const { Review, Booking } = require('../../models');
 
-// Create a review on a booking
+// Create a review
+// Only allowed if the log in user create a review for a booking which is already completed
 const createReview = async (req, res) => {
   const loginUser = req.user;
   try {
@@ -36,6 +37,26 @@ const createReview = async (req, res) => {
   }
 };
 
+// Edit a review
+const editReview = async (req, res) => {
+  const loginUser = req.user;
+  try {
+    const editReview = await Review.findOne({
+      where: {
+        uuid: req.params.reviewId,
+      },
+    });
+    await editReview.update({
+      rating: req.body.rating,
+      comment: req.body.comment,
+    });
+    await editReview.save();
+    res.status(200).json({ message: 'Review updated successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Get a list of all review about log in user (reviewee)
 const getMyReviews = async (req, res) => {
   try {
@@ -51,4 +72,4 @@ const getMyReviews = async (req, res) => {
   }
 };
 
-module.exports = { createReview, getMyReviews };
+module.exports = { createReview, getMyReviews, editReview };

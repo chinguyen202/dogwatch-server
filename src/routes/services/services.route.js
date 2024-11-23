@@ -5,14 +5,20 @@ const {
   updateService,
   deleteService,
   getServices,
+  getServiceById,
 } = require('./services.controller');
 const { verifyToken, adminOnly } = require('../auth/auth.middleware');
 
 const serviceRouter = express.Router();
 
 /** Manage create, edit, delete and create operation to services */
-serviceRouter.post('/api/v1/services', verifyToken, adminOnly, createService);
+// Get all the services available
 serviceRouter.get('/api/v1/services', verifyToken, getServices);
+// Get one service by its id
+serviceRouter.get('/api/v1/services/:id', verifyToken, getServiceById);
+
+// Create a new service (admin only)
+serviceRouter.post('/api/v1/services', verifyToken, adminOnly, createService);
 serviceRouter.put(
   '/api/v1/services/:id',
   verifyToken,

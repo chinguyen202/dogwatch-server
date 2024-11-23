@@ -40,6 +40,10 @@ const Review = sequelize.define(
           args: true,
           msg: 'A comment must be given',
         },
+        len: {
+          args: [4, 300],
+          msg: 'A review must contains at least 4 to 300 characters.',
+        },
       },
     },
     bookingId: {

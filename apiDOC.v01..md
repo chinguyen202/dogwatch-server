@@ -227,6 +227,25 @@ Response:
 ]
 ```
 
+### Get one service by its id
+
+```http
+  GET /api/v1/services/:id
+```
+
+Response:
+
+```json
+[
+  {
+    "uuid": "6337cdc7-d0ca-4a0d-a34b-f7a26adf42ce",
+    "name": "Boarding",
+    "createdAt": "2024-11-18T07:18:06.000Z",
+    "updatedAt": "2024-11-18T07:18:06.000Z"
+  }
+]
+```
+
 ### Update a sitter's provided services
 
 ```http
@@ -318,9 +337,9 @@ Response:
 
 ### Update booking status
 
-#### Owner: Cancel the booking request
+#### Owner: Cancel the booking request if the booking is still pending
 
-#### Sitter: Confirm or deny the booking request
+#### Sitter: Confirm or deny the booking request if the booking is still pending
 
 ```http
   PATCH /api/v1/bookings/:bookingId
@@ -344,6 +363,65 @@ Response:
 [
   {
     "message": "Updated booking status successfully"
+  }
+]
+```
+
+### Create a review (if there is a completed booking)
+
+```http
+  POST /api/v1/reviews/:bookingId
+```
+
+```http
+  Authorization: Bearer token
+```
+
+```http
+  Content-type: application/json
+```
+
+| Parameter     | Type     | Description                                          |
+| :------------ | :------- | :--------------------------------------------------- |
+| `rating `     | `number` | **Required, number from 1 to 5**                     |
+| `comment `    | `text`   | **Required, must have at least 4 to 300 characters** |
+| `revieweeId ` | `string` | **Required**                                         |
+
+Response:
+
+```json
+[
+  {
+    "message": "Create review successfully"
+  }
+]
+```
+
+### Edit a review
+
+```http
+  PUT /api/v1/reviews/:reviewId
+```
+
+```http
+  Authorization: Bearer token
+```
+
+```http
+  Content-type: application/json
+```
+
+| Parameter  | Type     | Description                                          |
+| :--------- | :------- | :--------------------------------------------------- |
+| `rating `  | `number` | **Required, number from 1 to 5**                     |
+| `comment ` | `text`   | **Required, must have at least 4 to 300 characters** |
+
+Response:
+
+```json
+[
+  {
+    "message": "Review updated successfully"
   }
 ]
 ```

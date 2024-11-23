@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, NOW } = require('sequelize');
 const sequelize = require('../config/database');
 
 const Booking = sequelize.define(
@@ -17,6 +17,10 @@ const Booking = sequelize.define(
         isDate: {
           args: true,
           msg: 'Start date must be of date type',
+        },
+        isAfter: {
+          args: NOW,
+          msg: 'Th start of booking can not be in the past',
         },
       },
     },
