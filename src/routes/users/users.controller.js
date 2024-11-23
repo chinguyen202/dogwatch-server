@@ -84,29 +84,32 @@ const createUser = async (req, res) => {
 
 // Update user
 const updateUser = async (req, res) => {
-  try {
-    // Get login user by token
-    const loginUser = req.user;
-    console.log(loginUser);
+  // Get login user by token
+  const { userId } = req.user;
+  // Get request information
+  const { firstName, lastName, email, headline, description } = req.body;
 
+  try {
     const updatedUser = await User.findOne({
       where: {
-        uuid: loginUser.userId,
+        uuid: userId,
       },
     });
+    if (!updateUser)
+      return res
+        .status(404)
+        .json({ message: `Can't found user with id ${userId}` });
 
     // Update user's information
     await updatedUser.update({
-      firstName: req.body.firstName ? req.body.firstName : loginUser.firstName,
-      lastName: req.body.lastName ? req.body.lastName : loginUser.lastName,
-      email: req.body.email ? req.body.email : loginUser.email,
-      role: loginUser.role,
-      location: loginUser.location,
-      avatar: req.file ? req.file.filename : loginUser.avatar, // If file is provided, update avatar
-      headline: req.body.bio ? req.body.headline : loginUser.headline,
-      description: req.body.description
-        ? req.body.description
-        : loginUser.description,
+      firstName: firstName ? firstName : updatedUser.firstName,
+      lastName: lastName ? lastName : updateUser.lastName,
+      email: email ? email : updateUser.email,
+      role: updatedUser.role,
+      location: updatedUser.location,
+      avatar: req.file ? req.file.filename : updatedUser.avatar,
+      headline: headline ? headline : updateUser.headline,
+      description: description ? description : updateUser.description,
     });
     await updatedUser.save();
     res.status(201).json({ message: `User updated` });

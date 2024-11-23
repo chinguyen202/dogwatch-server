@@ -171,10 +171,42 @@ const getConfirmedBookings = async (req, res) => {
   }
 };
 
+// Return completed bookings of a sitter
+const getCompletedBookings = async (req, res) => {
+  try {
+    const result = await Booking.findAll({
+      where: {
+        sitterId: req.params.sitterId,
+        status: 'completed',
+      },
+    });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Return pending bookings of a sitter
+const getPendingBookings = async (req, res) => {
+  try {
+    const result = await Booking.findAll({
+      where: {
+        sitterId: req.params.sitterId,
+        status: 'pending',
+      },
+    });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createBooking,
   updateBookingStatus,
   getMyBookings,
   getConfirmedBookings,
   setBookingsToCompleted,
+  getCompletedBookings,
+  getPendingBookings,
 };

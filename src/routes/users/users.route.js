@@ -21,6 +21,18 @@ const {
   verifyToken,
 } = require('../auth/auth.middleware');
 
+const userRouter = express.Router();
+
+// Config for photo upload
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'src/uploads/');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, file.fieldname + '-' + uniqueSuffix);
+  },
+});
 // Accept only images with certain file types
 const fileFilter = (req, file, cb) => {
   const acceptedTypes = ['image/jpeg', 'image/png'];
@@ -30,9 +42,8 @@ const fileFilter = (req, file, cb) => {
     cb(null, false);
   }
 };
-const upload = multer({ dest: 'src/uploads/' }, fileFilter);
 
-const userRouter = express.Router();
+const upload = multer({ storage, fileFilter });
 
 /**  Managing user information */
 // Create a new user

@@ -4,6 +4,9 @@ const {
   createBooking,
   updateBookingStatus,
   setBookingsToCompleted,
+  getCompletedBookings,
+  getPendingBookings,
+  getConfirmedBookings,
 } = require('./bookings.controller');
 const { verifyToken } = require('../auth/auth.middleware');
 
@@ -17,6 +20,23 @@ bookingRouter.get(
   setBookingsToCompleted,
   getMyBookings
 );
+// Get confirmed bookings of log in users
+bookingRouter.get(
+  '/api/v1/bookings/confirmed',
+  verifyToken,
+  getConfirmedBookings
+);
+
+// Get pending booking of log in users
+bookingRouter.get('/api/v1/bookings/pending', verifyToken, getPendingBookings);
+
+// Get completed bookings of log in users
+bookingRouter.get(
+  '/api/v1/bookings/completed',
+  verifyToken,
+  getCompletedBookings
+);
+
 // Create a booking request, allowed to perform by dog owner only
 bookingRouter.post('/api/v1/bookings', verifyToken, createBooking);
 // Update booking status
