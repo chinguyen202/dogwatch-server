@@ -1,5 +1,5 @@
 const { where, Op } = require('sequelize');
-const { Booking, User, Service } = require('../../models/index');
+const { Booking, User, Service, Review } = require('../../models/index');
 
 /** Create a booking ( done by log in user who is dog owner) */
 const createBooking = async (req, res) => {
@@ -151,6 +151,9 @@ const getMyBookings = async (req, res) => {
             as: 'owner',
             attributes: ['firstName', 'lastName'],
           },
+          {
+            model: Review,
+          },
         ],
       });
       res.status(200).json(bookings);
@@ -172,6 +175,9 @@ const getMyBookings = async (req, res) => {
             as: 'owner',
             attributes: ['firstName', 'lastName'],
           },
+          {
+            model: Review,
+          },
         ],
       });
       res.status(200).json(bookings);
@@ -183,6 +189,7 @@ const getMyBookings = async (req, res) => {
 
 // Get a booking by id
 const getBookingById = async (req, res) => {
+  const { role } = req.user;
   try {
     const result = await Booking.findOne({
       where: {
@@ -198,6 +205,9 @@ const getBookingById = async (req, res) => {
           model: User,
           as: 'owner',
           attributes: ['firstName', 'lastName'],
+        },
+        {
+          model: Review,
         },
       ],
     });

@@ -28,6 +28,9 @@ User.hasMany(Review, { foreignKey: 'revieweeId', as: 'receivedReviews' });
 
 Review.belongsTo(User, { foreignKey: 'reviewerId' });
 Review.belongsTo(User, { foreignKey: 'revieweeId' });
+
+// Booking -> Review
 Review.belongsTo(Booking, { foreignKey: 'bookingId' });
+Booking.hasMany(Review, { foreignKey: 'bookingId' });
 
 module.exports = { User, Service, Booking, Review, Message };
