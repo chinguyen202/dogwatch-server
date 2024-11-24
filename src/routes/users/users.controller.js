@@ -1,6 +1,7 @@
 const argon2 = require('argon2');
 const jwt = require('jsonwebtoken');
 const { User, Review, Service } = require('../../models/index');
+const { makeThumbnail } = require('../../utils/imageUtils');
 
 // Get all sitters
 const getSitters = async (req, res) => {
@@ -99,6 +100,10 @@ const updateUser = async (req, res) => {
       return res
         .status(404)
         .json({ message: `Can't found user with id ${userId}` });
+
+    if (req.file) {
+      await makeThumbnail(req.file.path, req.file.filename);
+    }
 
     // Update user's information
     await updatedUser.update({
