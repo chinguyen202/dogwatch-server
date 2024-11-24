@@ -10,6 +10,12 @@ const getSitters = async (req, res) => {
       where: {
         role: 'sitter',
       },
+      include: [
+        {
+          model: Review,
+          as: 'receivedReviews',
+        },
+      ],
       attributes: {
         exclude: ['password'], // Excludes the 'password' field from the response
       },
