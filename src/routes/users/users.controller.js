@@ -177,6 +177,11 @@ const searchForSitters = async (req, res) => {
             },
             required: true,
           },
+          {
+            model: Review,
+            as: 'receivedReviews',
+            required: true,
+          },
         ],
       });
     } else {
