@@ -143,12 +143,12 @@ const getMyBookings = async (req, res) => {
           {
             model: User,
             as: 'sitter',
-            attributes: ['firstName', 'lastName'],
+            attributes: ['firstName', 'lastName', 'avatar'],
           },
           {
             model: User,
             as: 'owner',
-            attributes: ['firstName', 'lastName'],
+            attributes: ['firstName', 'lastName', 'avatar'],
           },
           {
             model: Review,
@@ -167,12 +167,12 @@ const getMyBookings = async (req, res) => {
           {
             model: User,
             as: 'sitter',
-            attributes: ['firstName', 'lastName'],
+            attributes: ['firstName', 'lastName', 'avatar'],
           },
           {
             model: User,
             as: 'owner',
-            attributes: ['firstName', 'lastName'],
+            attributes: ['firstName', 'lastName', 'avatar'],
           },
           {
             model: Review,
@@ -198,12 +198,12 @@ const getBookingById = async (req, res) => {
         {
           model: User,
           as: 'sitter',
-          attributes: ['firstName', 'lastName'],
+          attributes: ['firstName', 'lastName', 'avatar'],
         },
         {
           model: User,
           as: 'owner',
-          attributes: ['firstName', 'lastName'],
+          attributes: ['firstName', 'lastName', 'avatar'],
         },
         {
           model: Review,
