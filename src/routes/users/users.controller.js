@@ -1,6 +1,7 @@
 const argon2 = require('argon2');
 const jwt = require('jsonwebtoken');
 const { User, Review, Service } = require('../../models/index');
+const { makeThumbnail } = require('../../utils/imageUtils');
 
 // Get all sitters
 const getSitters = async (req, res) => {
@@ -9,6 +10,12 @@ const getSitters = async (req, res) => {
       where: {
         role: 'sitter',
       },
+      include: [
+        {
+          model: Review,
+          as: 'receivedReviews',
+        },
+      ],
       attributes: {
         exclude: ['password'], // Excludes the 'password' field from the response
       },
@@ -100,6 +107,10 @@ const updateUser = async (req, res) => {
         .status(404)
         .json({ message: `Can't found user with id ${userId}` });
 
+    if (req.file) {
+      await makeThumbnail(req.file.path, req.file.filename);
+    }
+
     // Update user's information
     await updatedUser.update({
       firstName: firstName ? firstName : updatedUser.firstName,
@@ -149,29 +160,58 @@ const updatePassword = async (req, res) => {
 // Search for sitter using service, location and rating
 const searchForSitters = async (req, res) => {
   const { serviceId, location, rating } = req.body;
+  let searchResults;
   try {
-    const result = await User.findAll({
-      where: {
-        location: location,
-      },
-      include: [
-        {
-          model: Review,
-          as: 'receivedReviews',
-          where: {
-            rating: rating,
-          },
+    if (rating === 0) {
+      searchResults = await User.findAll({
+        where: {
+          location: location,
+          role: 'sitter',
         },
-        {
-          model: Service,
-          through: { attributes: [] },
-          where: {
-            uuid: serviceId,
+        include: [
+          {
+            model: Service,
+            through: { attributes: [] },
+            where: {
+              uuid: serviceId,
+            },
+            required: true,
           },
+          {
+            model: Review,
+            as: 'receivedReviews',
+            required: true,
+          },
+        ],
+      });
+    } else {
+      searchResults = await User.findAll({
+        where: {
+          location: location,
+          role: 'sitter',
         },
-      ],
-    });
-    res.status(200).json(result);
+        include: [
+          {
+            model: Review,
+            as: 'receivedReviews',
+            where: {
+              rating: rating,
+            },
+            required: true,
+          },
+          {
+            model: Service,
+            through: { attributes: [] },
+            where: {
+              uuid: serviceId,
+            },
+            required: true,
+          },
+        ],
+      });
+    }
+
+    res.status(200).json(searchResults);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
