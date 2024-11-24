@@ -3,13 +3,9 @@ const { Message } = require('../../models/index');
 // Get log in user's message
 const getMyMessages = async (req, res) => {
   const loginUser = req.user;
+  const receiverId = req.params.id;
   try {
-    const receivedMessages = await Message.findAll({
-      where: {
-        receiverId: loginUser.userId,
-      },
-    });
-    const sentMessages = await Message.findAll({
+    const messages = await Message.findAll({
       where: {
         senderId: loginUser.userId,
       },
