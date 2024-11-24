@@ -160,29 +160,53 @@ const updatePassword = async (req, res) => {
 // Search for sitter using service, location and rating
 const searchForSitters = async (req, res) => {
   const { serviceId, location, rating } = req.body;
+  let searchResults;
   try {
-    const result = await User.findAll({
-      where: {
-        location: location,
-      },
-      include: [
-        {
-          model: Review,
-          as: 'receivedReviews',
-          where: {
-            rating: rating,
-          },
+    if (rating === 0) {
+      searchResults = await User.findAll({
+        where: {
+          location: location,
+          role: 'sitter',
         },
-        {
-          model: Service,
-          through: { attributes: [] },
-          where: {
-            uuid: serviceId,
+        include: [
+          {
+            model: Service,
+            through: { attributes: [] },
+            where: {
+              uuid: serviceId,
+            },
+            required: true,
           },
+        ],
+      });
+    } else {
+      searchResults = await User.findAll({
+        where: {
+          location: location,
+          role: 'sitter',
         },
-      ],
-    });
-    res.status(200).json(result);
+        include: [
+          {
+            model: Review,
+            as: 'receivedReviews',
+            where: {
+              rating: rating,
+            },
+            required: true,
+          },
+          {
+            model: Service,
+            through: { attributes: [] },
+            where: {
+              uuid: serviceId,
+            },
+            required: true,
+          },
+        ],
+      });
+    }
+
+    res.status(200).json(searchResults);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
