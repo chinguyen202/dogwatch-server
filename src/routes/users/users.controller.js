@@ -37,6 +37,13 @@ const getUserById = async (req, res) => {
         {
           model: Review,
           as: 'receivedReviews',
+          include: [
+            {
+              model: User,
+              as: 'reviewer',
+              attributes: ['uuid', 'avatar', 'lastName', 'firstName'],
+            },
+          ],
         },
         {
           model: Service,
