@@ -6,6 +6,12 @@ const createBooking = async (req, res) => {
   const { startDate, endDate, location, serviceId, sitterId } = req.body;
   const logInUserId = req.user.userId;
 
+  if (req.user.role !== 'owner')
+    return res.status(400).json({
+      success: false,
+      message: 'Only dog owner is allowed to create a booking request',
+    });
+
   try {
     // Find the sitter
     const sitter = await User.findOne({
@@ -100,11 +106,11 @@ const updateBookingStatus = async (req, res) => {
   }
 };
 
-// Set the booking status completed by comparing today with the end date with confirmed bookings
+/** Set the booking status completed by comparing today with the end date with confirmed bookings  */
 const setBookingsToCompleted = async (req, res, next) => {
   const loginUser = req.user;
   const today = new Date().toISOString();
-  console.log(`TODAY IS ${today}`);
+  // console.log(`TODAY IS ${today}`);
 
   const updatedField = loginUser.role === 'owner' ? 'ownerId' : 'sitterId';
 
