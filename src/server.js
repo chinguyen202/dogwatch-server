@@ -1,5 +1,6 @@
 const { createServer } = require('http');
 const { Server } = require('socket.io');
+const jwt = require('jsonwebtoken');
 const app = require('./app');
 
 const httpServer = createServer(app);
@@ -10,25 +11,43 @@ const io = new Server(httpServer, {
     credentials: true,
   },
 });
+
+// Use token
+io.use(async (socket, next) => {
+  try {
+    const token = socket.handshake.query.token;
+    const payload = await jwt.verify(token, process.env.SECRET);
+    socket.userId = payload.userId;
+    next();
+  } catch (error) {}
+});
+
 // Listen to socket events
-const userSocketMap = new Map();
+global.onlineUsers = new Map();
+
 io.on('connection', (socket) => {
   // Handle new client connection
-  console.log(`User connected: ${socket.id}`);
-  const userId = socket.handshake.query.userId;
-  if (userId) {
-    userSocketMap.set(String(userId), socket.id);
-    console.log(`User ${userId} connected on socket ${socket.id}`);
-  } else {
-    console.log(`User connected on socket ${socket.id} without userId`);
-  }
+  console.log(`User connected: ${socket.userId}`);
+  onlineUsers.set(socket.userId);
+
+  // // Create a room for 2 user
+  // socket.on('joinRoom', function (data) {
+  //   const { roomId } = data;
+  //   socket.join(roomId);
+  //   console.log(`${socket.userId} Joined room ${roomId}`);
+  // });
+
   // Handle incoming messages
   socket.on('sendMessage', (data) => {
-    socket.to(data.room).emit('receiveMessage', data);
+    console.log(`RECEIVE MESSAGE: ${data}`);
+    const onlineReceiver = onlineUsers.get(data.receiverId);
+    if (onlineReceiver) {
+      socket.to(onlineReceiver).emit('receiveMessage', data);
+    }
   });
   // Handle client disconnect
   socket.on('disconnect', () => {
-    console.log('User Disconnected', socket.id);
+    console.log(`User disconnected: ${socket.userId}`);
   });
 });
 

@@ -17,11 +17,6 @@ Booking.belongsTo(User, { foreignKey: 'ownerId', as: 'owner' });
 // Service -> Booking (Service can have many bookings)
 Service.hasMany(Booking, { foreignKey: 'serviceId' });
 
-// User -> Message
-User.hasMany(Message);
-Message.belongsTo(User, { foreignKey: 'senderId' });
-Message.belongsTo(User, { foreignKey: 'receiverId' });
-
 // User -> Review
 User.hasMany(Review, { foreignKey: 'reviewerId', as: 'givenReviews' });
 User.hasMany(Review, { foreignKey: 'revieweeId', as: 'receivedReviews' });
@@ -32,5 +27,10 @@ Review.belongsTo(User, { foreignKey: 'revieweeId' });
 // Booking -> Review
 Review.belongsTo(Booking, { foreignKey: 'bookingId' });
 Booking.hasMany(Review, { foreignKey: 'bookingId' });
+
+// User -> Message
+User.hasMany(Message);
+Message.belongsTo(User, { foreignKey: 'senderId', as: 'sender' });
+Message.belongsTo(User, { foreignKey: 'receiverId', as: 'receiver' });
 
 module.exports = { User, Service, Booking, Review, Message };
