@@ -2,7 +2,7 @@ const express = require('express');
 const { verifyToken } = require('../auth/auth.middleware');
 const {
   createMessage,
-  getMessages,
+  getMessagesFromId,
   getMyMessages,
 } = require('./message.controller');
 

@@ -25,7 +25,7 @@ const getMyMessages = async (req, res) => {
 };
 
 // Get message from a specific user
-const getMessages = async (req, res) => {
+const getMessagesFromId = async (req, res) => {
   const { id } = req.params;
   const { userId } = req.user;
   const roomId = [id, userId].sort().join('');
@@ -64,4 +64,4 @@ const createMessage = async (req, res) => {
   }
 };
 
-module.exports = { createMessage, getMyMessages, getMessages };
+module.exports = { createMessage, getMyMessages, getMessagesFromId };
