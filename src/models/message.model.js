@@ -13,25 +13,44 @@ const Message = sequelize.define(
         notEmpty: true,
       },
     },
+    roomId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: 'RoomId is not allowed to be null',
+        },
+      },
+    },
     content: {
       type: DataTypes.TEXT,
       allowNull: false,
       validate: {
-        notEmpty: true,
+        notEmpty: {
+          args: true,
+          msg: 'Content of message is not allowed to be null',
+        },
       },
     },
     senderId: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notEmpty: true,
+        notEmpty: {
+          args: true,
+          msg: 'Sender Id is not allowed to be null',
+        },
       },
     },
     receiverId: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notEmpty: true,
+        notEmpty: {
+          args: true,
+          msg: 'Receiver Id is not allowed to be null',
+        },
       },
     },
   },

@@ -30,12 +30,12 @@ io.on('connection', (socket) => {
   console.log(`User connected: ${socket.userId}`);
   onlineUsers.set(socket.userId);
 
-  // // Create a room for 2 user
-  // socket.on('joinRoom', function (data) {
-  //   const { roomId } = data;
-  //   socket.join(roomId);
-  //   console.log(`${socket.userId} Joined room ${roomId}`);
-  // });
+  // Create a room for 2 user
+  socket.on('joinRoom', function (data) {
+    const { roomId } = data;
+    socket.join(roomId);
+    console.log(`${socket.userId} Joined room ${roomId}`);
+  });
 
   // Handle incoming messages
   socket.on('sendMessage', (data) => {

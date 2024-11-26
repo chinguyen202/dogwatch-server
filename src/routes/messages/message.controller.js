@@ -10,18 +10,15 @@ const getMyMessages = async (req, res) => {
       where: {
         receiverId: loginUser.userId,
       },
+      attributes: [
+        'roomId',
+        [sequelize.fn('COUNT', 'senderId'), 'countSender'],
+      ],
+      group: ['roomId'],
       order: [['createdAt', 'DESC']],
     });
-    // Group messages by senderId
-    const groupedMessages = messages.reduce((acc, message) => {
-      const senderId = message.senderId;
-      if (!acc[senderId]) {
-        acc[senderId] = [];
-      }
-      acc[senderId].push(message);
-      return acc;
-    }, {});
-    res.status(200).json({ success: true, groupedMessages });
+
+    res.status(200).json({ success: true, messages });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -31,41 +28,35 @@ const getMyMessages = async (req, res) => {
 const getMessages = async (req, res) => {
   const { id } = req.params;
   const { userId } = req.user;
-
+  const roomId = [id, userId].sort().join('');
+  console.log(`MESSAGE: roomID is ${roomId}`);
   try {
-    const inMessages = await Message.findAll({
+    const messages = await Message.findAll({
       where: {
-        senderId: id,
-        receiverId: userId,
+        roomId: roomId,
       },
       order: [['createdAt', 'DESC']],
     });
-    const outMessages = await Message.findAll({
-      where: {
-        senderId: userId,
-        receiverId: id,
-      },
-      order: [['createdAt', 'DESC']],
-    });
-    // Merge both message arrays
-    const allMessages = [...inMessages, ...outMessages];
-
     // Sort messages by 'createdAt' to have a unified conversation flow
-    allMessages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-    res.status(200).json({ success: true, allMessages });
+    res.status(200).json({ success: true, messages });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// Create a message
+/** Create a message*/
 const createMessage = async (req, res) => {
   const { userId } = req.user;
+  const { content } = req.body;
+  const receiverId = req.params.receiverId;
+  const roomId = [userId, receiverId].sort().join('');
+  console.log(`MESSAGE: roomID is ${roomId}`);
   try {
     const message = await Message.create({
-      content: req.body.content,
+      content: content,
       senderId: userId,
-      receiverId: req.params.receiverId,
+      receiverId: receiverId,
+      roomId: roomId,
     });
     res.status(201).json({ success: true, message });
   } catch (error) {
