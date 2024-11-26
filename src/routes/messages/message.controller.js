@@ -15,7 +15,6 @@ const getMyMessages = async (req, res) => {
         [sequelize.fn('COUNT', 'senderId'), 'countSender'],
       ],
       group: ['roomId'],
-      order: [['createdAt', 'DESC']],
     });
 
     res.status(200).json({ success: true, messages });
@@ -35,7 +34,6 @@ const getMessagesFromId = async (req, res) => {
       where: {
         roomId: roomId,
       },
-      order: [['createdAt', 'DESC']],
     });
     // Sort messages by 'createdAt' to have a unified conversation flow
     res.status(200).json({ success: true, messages });
