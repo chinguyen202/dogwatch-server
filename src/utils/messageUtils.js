@@ -6,11 +6,13 @@ const groupMessages = (messages, loginUserId) => {
     const partner = sender.uuid === loginUserId ? receiver : sender;
     const partnerName = `${partner.firstName} ${partner.lastName}`;
     const partnerId = partner.uuid;
+    const partnerAvatar = partner.avatar;
 
     if (!messagesByUser[partnerId]) {
       messagesByUser[partnerId] = {
         partnerId,
         partnerName,
+        partnerAvatar,
         messages: [],
       };
     }
@@ -23,6 +25,13 @@ const groupMessages = (messages, loginUserId) => {
       createdAt: message.createdAt,
       updatedAt: message.updatedAt,
     });
+  });
+
+  // Sorted the messages by create at date
+  Object.values(messagesByUser).forEach((userMessages) => {
+    userMessages.messages.sort(
+      (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+    );
   });
 
   // Convert object to array and return
