@@ -37,16 +37,20 @@ const getMyMessages = async (req, res) => {
   }
 };
 
-// Get message from a specific user
+/**
+ * Get message from a specific user
+ */
 const getMessagesFromId = async (req, res) => {
   const { id } = req.params;
   const { userId } = req.user;
-  const roomId = [id, userId].sort().join('');
-  console.log(`MESSAGE: roomID is ${roomId}`);
+
   try {
     const messages = await Message.findAll({
       where: {
-        roomId: roomId,
+        [Op.or]: [
+          { receiverId: id, senderId: userId },
+          { senderId: id, receiverId: userId },
+        ],
       },
     });
     // Sort messages by 'createdAt' to have a unified conversation flow
@@ -63,13 +67,11 @@ const createMessage = async (req, res) => {
   const { userId } = req.user;
   const { content } = req.body;
   const receiverId = req.params.receiverId;
-  const roomId = [userId, receiverId].sort().join('');
   try {
     const message = {
       content: content,
       senderId: userId,
       receiverId: receiverId,
-      roomId: roomId,
     };
     await sendMessage(message);
     res.status(201).json({ success: true, message });

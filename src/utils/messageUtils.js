@@ -27,6 +27,13 @@ const groupMessages = (messages, loginUserId) => {
     });
   });
 
+  // Sorted the messages by create at date
+  Object.values(messagesByUser).forEach((userMessages) => {
+    userMessages.messages.sort(
+      (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+    );
+  });
+
   // Convert object to array and return
   const result = Object.values(messagesByUser);
   return result;
