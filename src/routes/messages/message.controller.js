@@ -19,12 +19,12 @@ const getMyMessages = async (req, res) => {
         {
           model: User,
           as: 'sender',
-          attributes: ['uuid', 'firstName', 'lastName'],
+          attributes: ['uuid', 'firstName', 'lastName', 'avatar'],
         },
         {
           model: User,
           as: 'receiver',
-          attributes: ['uuid', 'firstName', 'lastName'],
+          attributes: ['uuid', 'firstName', 'lastName', 'avatar'],
         },
       ],
     });

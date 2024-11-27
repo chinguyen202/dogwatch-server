@@ -6,11 +6,13 @@ const groupMessages = (messages, loginUserId) => {
     const partner = sender.uuid === loginUserId ? receiver : sender;
     const partnerName = `${partner.firstName} ${partner.lastName}`;
     const partnerId = partner.uuid;
+    const partnerAvatar = partner.avatar;
 
     if (!messagesByUser[partnerId]) {
       messagesByUser[partnerId] = {
         partnerId,
         partnerName,
+        partnerAvatar,
         messages: [],
       };
     }
