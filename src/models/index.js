@@ -5,8 +5,8 @@ const Review = require('./review.model');
 const Message = require('./message.model');
 
 // Service -> User relationship
-User.belongsToMany(Service, { through: 'User_Services' });
-Service.belongsToMany(User, { through: 'User_Services' });
+User.belongsToMany(Service, { through: 'user_services' });
+Service.belongsToMany(User, { through: 'user_services' });
 
 // User -> Booking association
 User.hasMany(Booking, { foreignKey: 'sitterId' });
