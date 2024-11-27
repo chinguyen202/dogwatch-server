@@ -4,8 +4,9 @@ const { Message } = require('../models/index');
 
 const userSocketMap = new Map();
 let io;
-// Set up the socket server
-
+/**
+ * Set up the socket server
+ */
 const setupSocket = (httpServer) => {
   io = new Server(httpServer, {
     cors: {
@@ -28,7 +29,11 @@ const setupSocket = (httpServer) => {
     }
   };
 
+  /**
+   * Handle connection
+   */
   io.on('connection', (socket) => {
+    // Get the userId and add it to userSocketMap
     const userId = socket.handshake.query.userId;
     if (userId) {
       userSocketMap.set(userId, socket.id);
@@ -36,9 +41,10 @@ const setupSocket = (httpServer) => {
     } else {
       console.log('User ID is not provided during connection.');
     }
-
+    // on sendMessage
     socket.on('sendMessage', sendMessage);
 
+    // on disconnect
     socket.on('disconnect', () => disconnect(socket));
   });
 
@@ -50,13 +56,12 @@ const setupSocket = (httpServer) => {
  */
 
 const sendMessage = async (message) => {
-  console.log(`MESSAGE ${JSON.stringify(message)}`);
+  // get sender and receiver socket id from socket map
   const senderSocketId = userSocketMap.get(message.senderId);
   const receiverSocketId = userSocketMap.get(message.receiverId);
-  console.log(`RECEIVER SOCKET IS ${receiverSocketId}`);
-  console.log(`SENDER SOCKET  IS ${receiverSocketId}`);
-
+  // Add the message to the database
   await Message.create(message);
+  // If user is connected to socket, emit message to user
   if (receiverSocketId) {
     console.log(`RECEIVER SOCKET IS ${receiverSocketId}`);
     io.to(receiverSocketId).emit('receiveMessage', message);
