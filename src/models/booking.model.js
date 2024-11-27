@@ -46,7 +46,7 @@ const Booking = sequelize.define(
       defaultValue: 'pending',
     },
     serviceId: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: false,
       validate: {
         notEmpty: {
@@ -56,7 +56,7 @@ const Booking = sequelize.define(
       },
     },
     sitterId: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: false,
       validate: {
         notEmpty: {
@@ -66,7 +66,7 @@ const Booking = sequelize.define(
       },
     },
     ownerId: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: false,
       validate: {
         notEmpty: {

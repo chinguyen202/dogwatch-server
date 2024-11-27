@@ -24,7 +24,7 @@ const Message = sequelize.define(
       },
     },
     senderId: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: false,
       validate: {
         notEmpty: {
@@ -34,7 +34,7 @@ const Message = sequelize.define(
       },
     },
     receiverId: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: false,
       validate: {
         notEmpty: {
