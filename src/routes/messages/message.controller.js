@@ -1,23 +1,36 @@
-const sequelize = require('sequelize');
+const { Op, sequelize, fn } = require('sequelize');
 
-const { Message } = require('../../models/index');
+const { Message, User } = require('../../models/index');
 const { io } = require('../../config/socket');
+const { groupMessages } = require('../../utils/messageUtils');
 
-// Get log in user's message,group by senderId
+// Get log in user's message (including send and receive),group by senderId
 const getMyMessages = async (req, res) => {
   const loginUser = req.user;
   try {
-    const messages = await Message.findAll({
+    let messages = await Message.findAll({
       where: {
-        receiverId: loginUser.userId,
+        [Op.or]: [
+          { receiverId: loginUser.userId },
+          { senderId: loginUser.userId },
+        ],
       },
-      attributes: [
-        'roomId',
-        [sequelize.fn('COUNT', 'senderId'), 'countSender'],
+      include: [
+        {
+          model: User,
+          as: 'sender',
+          attributes: ['uuid', 'firstName', 'lastName'],
+        },
+        {
+          model: User,
+          as: 'receiver',
+          attributes: ['uuid', 'firstName', 'lastName'],
+        },
       ],
-      group: ['roomId'],
     });
 
+    // Group messages
+    messages = groupMessages(messages);
     res.status(200).json({ success: true, messages });
   } catch (error) {
     res.status(500).json({ message: error.message });

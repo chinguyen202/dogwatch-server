@@ -5,7 +5,7 @@ const User = sequelize.define(
   'users',
   {
     uuid: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       allowNull: false,
       primaryKey: true,
@@ -120,6 +120,12 @@ const User = sequelize.define(
           msg: 'Must be between 4 and 1000 characters',
         },
       },
+    },
+  },
+  {
+    hooks: {
+      beforeCreate() {},
+      beforeBulkCreate() {},
     },
   },
   {

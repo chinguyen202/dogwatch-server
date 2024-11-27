@@ -5,7 +5,7 @@ const Message = sequelize.define(
   'messages',
   {
     uuid: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
       allowNull: false,
