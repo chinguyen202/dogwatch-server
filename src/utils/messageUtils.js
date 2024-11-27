@@ -1,22 +1,33 @@
 const groupMessages = (messages, loginUserId) => {
-  console.log(`USER ID IS ${loginUserId}`);
-  return messages.reduce((acc, message) => {
-    const { roomId, sender, receiver } = message;
-    // Define the other user in the chat
-    const otherUser = sender.uuid === loginUserId ? receiver : sender;
-    const otherUserName = `${otherUser.firstName} ${otherUser.lastName}`;
-    //If the roomID doesn't exist
-    if (!acc[roomId]) {
-      acc[roomId] = {
-        user: otherUserName,
+  const messagesByUser = {};
+
+  messages.forEach((message) => {
+    const { sender, receiver } = message;
+    const partner = sender.uuid === loginUserId ? receiver : sender;
+    const partnerName = `${partner.firstName} ${partner.lastName}`;
+    const partnerId = partner.uuid;
+
+    if (!messagesByUser[partnerId]) {
+      messagesByUser[partnerId] = {
+        partnerId,
+        partnerName,
         messages: [],
       };
     }
-    // Add the message to the roomID
-    acc[roomId].messages.push(message);
-    // return the grouped messages
-    return acc;
-  }, {});
+
+    messagesByUser[partnerId].messages.push({
+      uuid: message.uuid,
+      content: message.content,
+      senderId: message.senderId,
+      receiverId: message.receiverId,
+      createdAt: message.createdAt,
+      updatedAt: message.updatedAt,
+    });
+  });
+
+  // Convert object to array and return
+  const result = Object.values(messagesByUser);
+  return result;
 };
 
 module.exports = { groupMessages };

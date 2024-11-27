@@ -29,7 +29,8 @@ Review.belongsTo(Booking, { foreignKey: 'bookingId' });
 Booking.hasMany(Review, { foreignKey: 'bookingId' });
 
 // User -> Message
-User.hasMany(Message);
+User.hasMany(Message, { foreignKey: 'senderId', as: 'sendMessages' });
+User.hasMany(Message, { foreignKey: 'receiverId', as: 'receiveMessages' });
 Message.belongsTo(User, { foreignKey: 'senderId', as: 'sender' });
 Message.belongsTo(User, { foreignKey: 'receiverId', as: 'receiver' });
 

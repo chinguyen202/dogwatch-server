@@ -2,11 +2,12 @@ const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
 const { Message } = require('../models/index');
 
-// Set up the socket server
 const userSocketMap = new Map();
+let io;
+// Set up the socket server
 
 const setupSocket = (httpServer) => {
-  const io = new Server(httpServer, {
+  io = new Server(httpServer, {
     cors: {
       origin: '*',
       methods: ['GET', 'POST'],
@@ -49,15 +50,19 @@ const setupSocket = (httpServer) => {
  */
 
 const sendMessage = async (message) => {
-  console.log(`MESSAGE ${message}`);
+  console.log(`MESSAGE ${JSON.stringify(message)}`);
   const senderSocketId = userSocketMap.get(message.senderId);
   const receiverSocketId = userSocketMap.get(message.receiverId);
+  console.log(`RECEIVER SOCKET IS ${receiverSocketId}`);
+  console.log(`SENDER SOCKET  IS ${receiverSocketId}`);
 
   await Message.create(message);
   if (receiverSocketId) {
+    console.log(`RECEIVER SOCKET IS ${receiverSocketId}`);
     io.to(receiverSocketId).emit('receiveMessage', message);
   }
   if (senderSocketId) {
+    console.log(`SENDER SOCKET  IS ${receiverSocketId}`);
     io.to(senderSocketId).emit('sendMessage', message);
   }
 };

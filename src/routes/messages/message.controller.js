@@ -28,7 +28,7 @@ const getMyMessages = async (req, res) => {
         },
       ],
     });
-
+    console.log(`LOGIN USER ID IS ${loginUser.userId}`);
     // Group messages
     messages = groupMessages(messages, loginUser.userId);
     res.status(200).json({ success: true, messages });
@@ -56,7 +56,9 @@ const getMessagesFromId = async (req, res) => {
   }
 };
 
-/** Create a message*/
+/**
+ * Create a message
+ */
 const createMessage = async (req, res) => {
   const { userId } = req.user;
   const { content } = req.body;
