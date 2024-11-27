@@ -120,6 +120,12 @@ const User = sequelize.define(
     },
   },
   {
+    hooks: {
+      beforeCreate() {},
+      beforeBulkCreate() {},
+    },
+  },
+  {
     freezeTableName: true,
   }
 );
