@@ -45,7 +45,9 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ storage, fileFilter });
 
-/**  Managing user information */
+/**
+ *  Managing user information
+ */
 // Create a new user
 userRouter.post('/api/v1/register', createUser);
 // Update user info

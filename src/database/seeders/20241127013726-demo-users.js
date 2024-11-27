@@ -1,4 +1,6 @@
 'use strict';
+const { v4: uuidv4 } = require('uuid');
+const argon2 = require('argon2');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -7,12 +9,14 @@ module.exports = {
      * Add seed commands here.
      */
     try {
+      let password = await argon2.hash('password');
       return await queryInterface.bulkInsert('users', [
         {
+          uuid: uuidv4(),
           firstName: 'Robert',
           lastName: 'Harris',
           email: 'robert.harris@example.com',
-          password: 'password',
+          password,
           location: 'Helsinki',
           role: 'owner',
           headline: 'Father of Oscar, a 6 year old Labrador',
@@ -23,10 +27,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Mark',
           lastName: 'Robinson',
           email: 'mark.robinson@example.com',
-          password: 'password',
+          password,
           location: 'Helsinki',
           role: 'owner',
           headline: 'Father of Max, a 4 year old German Shepherd',
@@ -37,10 +42,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Oliver',
           lastName: 'Grant',
           email: 'oliver.grant@example.com',
-          password: 'password',
+          password,
           location: 'Espoo',
           role: 'owner',
           headline: 'Father of Lord, a 6 year old Doberman Pinscher',
@@ -51,10 +57,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Emily',
           lastName: 'Taylor',
           email: 'emily.taylor@example.com',
-          password: 'password',
+          password,
           location: 'Espoo',
           role: 'owner',
           headline: 'Mom of Nala, a 1 year old Rottweiler',
@@ -65,10 +72,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Anna',
           lastName: 'Salminen',
           email: 'anna.salminen@example.com',
-          password: 'password',
+          password,
           location: 'Vantaa',
           role: 'owner',
           headline: 'Mom of Shadow',
@@ -79,10 +87,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Michelle',
           lastName: 'White',
           email: 'michelle.white@example.com',
-          password: 'password',
+          password,
           location: 'Vantaa',
           role: 'owner',
           headline: 'Mom of Coco',
@@ -93,9 +102,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Ben',
           lastName: 'Harris',
           email: 'ben.harris@example.com',
+          password,
           location: 'Espoo',
           role: 'owner',
           headline: 'Father of Finn, a 3 year old Border Collie',
@@ -106,10 +117,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Daniel',
           lastName: 'Thompson',
           email: 'daniel.thompson@example.com',
-          password: 'password',
+          password,
           location: 'Vantaa',
           role: 'owner',
           headline: 'Father of Rocky and Apollo ',
@@ -120,10 +132,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Li',
           lastName: 'Wei',
           email: 'li.wei@example.com',
-          password: 'password',
+          password,
           location: 'Helsinki',
           role: 'owner',
           headline: 'Mom of Luna',
@@ -134,10 +147,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Julia',
           lastName: 'Smith',
           email: 'julia.smith@example.com',
-          password: 'password',
+          password,
           location: 'Espoo',
           role: 'owner',
           headline: 'Mom of Buddy',
@@ -148,10 +162,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Emma',
           lastName: 'Karjalainen',
           email: 'Emma.karjalainen@example.com',
-          password: 'password',
+          password,
           location: 'Vantaa',
           role: 'owner',
           headline: 'Mom of Chico',
@@ -162,10 +177,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Emily',
           lastName: 'Nieminen',
           email: 'emily.nieminen@example.com',
-          password: 'password',
+          password,
           location: 'Helsinki',
           role: 'owner',
           headline: 'Mom of Charlie',
@@ -176,10 +192,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Pekka',
           lastName: 'Korhonen',
           email: 'pekka.korhonen@example.com',
-          password: 'password',
+          password,
           location: 'Espoo',
           role: 'owner',
           headline: 'Dad of Daisy',
@@ -190,10 +207,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Heini',
           lastName: 'Laine',
           email: 'heini.laine@example.com',
-          password: 'password',
+          password,
           location: 'Vantaa',
           role: 'owner',
           headline: 'Mom of Milo',
@@ -204,10 +222,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Alina',
           lastName: 'Johnson',
           email: 'alina.johnson@example.com',
-          password: 'password',
+          password,
           location: 'Helsinki',
           role: 'sitter',
           headline:
@@ -219,10 +238,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Michaela',
           lastName: 'O’Reilly',
           email: 'michaela.oreilly@example.com',
-          password: 'password',
+          password,
           location: 'Helsinki',
           role: 'sitter',
           headline:
@@ -234,10 +254,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Priya',
           lastName: 'Patel,',
           email: 'priya.patel@example.com',
-          password: 'password',
+          password,
           location: 'Helsinki',
           role: 'sitter',
           headline: 'A pet lover with five years of experience',
@@ -248,10 +269,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Annika',
           lastName: 'Laitinen',
           email: 'annika.laitinen@example.com',
-          password: 'password',
+          password,
           location: 'Helsinki',
           role: 'sitter',
           headline: 'Experiences with volunteering at dog shelters',
@@ -262,10 +284,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Ethan',
           lastName: 'Davis',
           email: 'ethan.davis@example.com',
-          password: 'password',
+          password,
           location: 'Helsinki',
           role: 'sitter',
           headline: 'A professional dog trainer with five years of experience',
@@ -276,10 +299,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Jaana',
           lastName: 'Rantanen',
           email: 'jaana.rantanen@example.com',
-          password: 'password',
+          password,
           location: 'Espoo',
           role: 'sitter',
           headline:
@@ -291,10 +315,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Mia',
           lastName: 'Suomalainen ',
           email: 'mia.suomalainen @example.com',
-          password: 'password',
+          password,
           location: 'Espoo',
           role: 'sitter',
           headline: 'A former zookeeper with a deep love for animals',
@@ -305,10 +330,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Jamal',
           lastName: 'Singh ',
           email: 'jamal.singh @example.com',
-          password: 'password',
+          password,
           location: 'Espoo',
           role: 'sitter',
           headline: 'A fitness enthusiast',
@@ -319,10 +345,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Laura',
           lastName: 'Benson',
           email: 'laura.benson@example.com',
-          password: 'password',
+          password,
           location: 'Espoo',
           role: 'sitter',
           headline:
@@ -334,10 +361,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Chloe',
           lastName: 'Ramirez',
           email: 'chloe.ramirez@example.com',
-          password: 'password',
+          password,
           location: 'Espoo',
           role: 'sitter',
           headline:
@@ -349,10 +377,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Ryan',
           lastName: 'Lee',
           email: 'ryan.lee@example.com',
-          password: 'password',
+          password,
           location: 'Vantaa',
           role: 'sitter',
           headline: 'Professional animal care experience',
@@ -363,10 +392,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Jasmine',
           lastName: 'Liu',
           email: 'jasmine.liu@example.com',
-          password: 'password',
+          password,
           location: 'Vantaa',
           role: 'sitter',
           headline: 'A pet behaviorist with a passion for helping dogs',
@@ -377,10 +407,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Sofia',
           lastName: 'Martinez',
           email: 'sofia.martinez@example.com',
-          password: 'password',
+          password,
           location: 'Vantaa',
           role: 'sitter',
           headline: 'A lifelong dog lover',
@@ -391,10 +422,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Amira',
           lastName: 'Noor',
           email: 'amira.noor@example.com',
-          password: 'password',
+          password,
           location: 'Vantaa',
           role: 'sitter',
           headline: 'A pet lover and part-time photographer',
@@ -405,10 +437,11 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          uuid: uuidv4(),
           firstName: 'Mary',
           lastName: 'Brown',
           email: 'mary.brown@example.com',
-          password: 'password',
+          password,
           location: 'Vantaa',
           role: 'sitter',
           headline: 'A dog enthusiast',
@@ -428,6 +461,6 @@ module.exports = {
     /**
      * Add commands to revert seed here.
      */
-    await queryInterface.bulkDelete('Users', null, {});
+    await queryInterface.bulkDelete('users', null, {});
   },
 };
