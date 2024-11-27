@@ -1,6 +1,7 @@
 const sequelize = require('sequelize');
 
 const { Message } = require('../../models/index');
+const { io } = require('../../config/socket');
 
 // Get log in user's message,group by senderId
 const getMyMessages = async (req, res) => {
@@ -50,12 +51,18 @@ const createMessage = async (req, res) => {
   const roomId = [userId, receiverId].sort().join('');
   console.log(`MESSAGE: roomID is ${roomId}`);
   try {
-    const message = await Message.create({
+    const message = {
       content: content,
       senderId: userId,
       receiverId: receiverId,
       roomId: roomId,
-    });
+    };
+    await Message.create(message);
+
+    // Emit the message through Socket after it is created
+    if (io) {
+      io.to(receiverId).emit('sendMessage', message);
+    }
     res.status(201).json({ success: true, message });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
