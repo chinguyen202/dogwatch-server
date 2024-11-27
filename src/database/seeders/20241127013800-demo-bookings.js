@@ -22,41 +22,28 @@ module.exports = {
         { type: Sequelize.QueryTypes.SELECT }
       );
 
-      // Define possible statuses
-      const statuses = ['pending', 'confirmed', 'completed'];
+      // Define date for bookings
       const today = new Date();
+      const startDate = new Date(today);
+      startDate.setDate(today.getDate() - 5);
 
       // Prepare the bulk insert data
-      const bookings = [
-        // {
-        //   uuid: uuidv4(),
-        //   startDate: new Date(),
-        //   endDate: new Date(),
-        //   location: '',
-        //   status: '',
-        //   serviceId:,
-        //   sitterId:,
-        //   ownerId:
-        // },
-      ];
+      const bookings = [];
 
       owners.forEach((owner) => {
         // Random select a sitter
         const randomSitter =
           sitters[Math.floor(Math.random() * sitters.length)];
-        // Randomly select a status
-        const randomStatus =
-          statuses[Math.floor(Math.random() * statuses.length)];
         // Add a booking in seeding data
         bookings.push({
           uuid: uuidv4(),
-          startDate: new Date(today.setDate(today.getDate() - 5)),
+          startDate: new Date(startDate),
           endDate: new Date(today),
           location: randomSitter.location,
-          status: randomStatus, // Random status
+          status: 'completed',
           serviceId: randomSitter.serviceUuid, // Ensure this sitter provides the service
           sitterId: randomSitter.sitterUuid,
-          ownerId: owner.ownerUuid,
+          ownerId: owner.uuid,
           createdAt: new Date(),
           updatedAt: new Date(),
         });
@@ -73,5 +60,6 @@ module.exports = {
     /**
      * Add commands to revert seed here.
      */
+    await queryInterface.bulkDelete('bookings', null, {});
   },
 };

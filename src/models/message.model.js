@@ -13,16 +13,6 @@ const Message = sequelize.define(
         notEmpty: true,
       },
     },
-    roomId: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notEmpty: {
-          args: true,
-          msg: 'RoomId is not allowed to be null',
-        },
-      },
-    },
     content: {
       type: DataTypes.TEXT,
       allowNull: false,
