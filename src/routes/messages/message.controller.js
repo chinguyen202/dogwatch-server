@@ -30,7 +30,7 @@ const getMyMessages = async (req, res) => {
     });
 
     // Group messages
-    messages = groupMessages(messages);
+    messages = groupMessages(messages, loginUser.userId);
     res.status(200).json({ success: true, messages });
   } catch (error) {
     res.status(500).json({ message: error.message });
