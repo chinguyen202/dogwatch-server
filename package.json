@@ -5,8 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "watch": "nodemon src/server.js",
-    "start": "node src/server.js",
-    "build": "npm run build"
+    "start": "node src/server.js"
   },
   "author": "",
   "license": "ISC",
