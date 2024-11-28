@@ -193,17 +193,47 @@ Response:
 ```json
 [
   {
-    "uuid": "005e37d5-c9bd-4978-809e-97f2d3f45b22",
-    "firstName": "test",
-    "lastName": "user",
-    "email": "email3@gmail.fi",
+    "uuid": "07e59a6d-54cd-4795-8b20-76a159ce7ba6",
+    "firstName": "Alina",
+    "lastName": "Johnson",
+    "email": "alina.johnson@example.com",
     "role": "sitter",
-    "location": "helsinki",
-    "avatar": "632795a20956ba431aa72b82c5b67771",
-    "headline": null,
-    "description": null,
-    "createdAt": "2024-11-18T12:00:58.000Z",
-    "updatedAt": "2024-11-19T10:53:22.000Z"
+    "location": "Helsinki",
+    "avatar": null,
+    "headline": "A part-time veterinary science student with a passion for animal care",
+    "description": "Hi! I’m Alina. ",
+    "createdAt": "2024-11-27T18:30:47.000Z",
+    "updatedAt": "2024-11-27T18:30:47.000Z",
+    "receivedReviews": [
+      {
+        "uuid": "5a53e856-1b19-4ca8-8347-3485bb8e2844",
+        "rating": 3,
+        "comment": "A bit disappointed. There was a delay in updates, but my pet was okay.",
+        "bookingId": "083c13c8-06b6-4ef6-b7b8-9fae34acad9d",
+        "reviewerId": "409d179c-e2c8-4295-a1bc-3b391c3c2ff6",
+        "revieweeId": "07e59a6d-54cd-4795-8b20-76a159ce7ba6",
+        "createdAt": "2024-11-27T20:12:48.000Z",
+        "updatedAt": "2024-11-27T20:12:48.000Z"
+      },
+      {
+        "uuid": "5ba75d37-87c7-4002-80db-fc676644a585",
+        "rating": 3,
+        "comment": "Satisfactory, but I was hoping for more interaction time.",
+        "bookingId": "735011f1-d608-40db-a09b-b77c170ca923",
+        "reviewerId": "b7facc52-8848-4017-8b43-82e112313b05",
+        "revieweeId": "07e59a6d-54cd-4795-8b20-76a159ce7ba6",
+        "createdAt": "2024-11-27T20:12:48.000Z",
+        "updatedAt": "2024-11-27T20:12:48.000Z"
+      }
+    ],
+    "services": [
+      {
+        "uuid": "67a861e8-7e03-487f-b55e-0243294f32c5",
+        "name": "House Sitting",
+        "createdAt": "2024-11-27T18:53:30.000Z",
+        "updatedAt": "2024-11-27T18:53:30.000Z"
+      }
+    ]
   }
 ]
 ```
@@ -283,10 +313,38 @@ Response:
 ```json
 [
   {
-    "uuid": "6337cdc7-d0ca-4a0d-a34b-f7a26adf42ce",
-    "name": "Boarding",
-    "createdAt": "2024-11-18T07:18:06.000Z",
-    "updatedAt": "2024-11-18T07:18:06.000Z"
+    "uuid": "a509bb0a-3c0a-411e-a175-20c375c367fd",
+    "startDate": "2024-11-22T19:49:43.000Z",
+    "endDate": "2024-11-22T19:49:43.000Z",
+    "location": "Vantaa",
+    "status": "completed",
+    "serviceId": "67a861e8-7e03-487f-b55e-0243294f32c5",
+    "sitterId": "67f50ca0-e130-4a22-a3a4-5be09704ac72",
+    "ownerId": "132184ff-6218-44a7-a6ee-8f4eccd2dbc0",
+    "createdAt": "2024-11-27T19:49:43.000Z",
+    "updatedAt": "2024-11-27T19:49:43.000Z",
+    "sitter": {
+      "firstName": "Ryan",
+      "lastName": "Lee",
+      "avatar": null
+    },
+    "owner": {
+      "firstName": "Emily",
+      "lastName": "Nieminen",
+      "avatar": null
+    },
+    "reviews": [
+      {
+        "uuid": "cac373c0-ccfb-4fdf-adff-da29e241ffb2",
+        "rating": 3,
+        "comment": "The service was good, but my pet seemed a little anxious afterward.",
+        "bookingId": "a509bb0a-3c0a-411e-a175-20c375c367fd",
+        "reviewerId": "132184ff-6218-44a7-a6ee-8f4eccd2dbc0",
+        "revieweeId": "67f50ca0-e130-4a22-a3a4-5be09704ac72",
+        "createdAt": "2024-11-27T20:12:48.000Z",
+        "updatedAt": "2024-11-27T20:12:48.000Z"
+      }
+    ]
   }
 ]
 ```
@@ -424,4 +482,99 @@ Response:
     "message": "Review updated successfully"
   }
 ]
+```
+
+### Create a message
+
+```http
+  POST /api/v1/messages/:receiverId
+```
+
+```http
+  Authorization: Bearer token
+```
+
+```http
+  Content-type: application/json
+```
+
+| Parameter  | Type   | Description  |
+| :--------- | :----- | :----------- | --- |
+| `content ` | `text` | **Required** |     |
+
+Response:
+
+```json
+{
+  "success": true,
+  "message": {
+    "content": "hi there",
+    "senderId": "17420dd8-e349-48f2-8c23-f70d225b5399",
+    "receiverId": "65f86381-878b-4b0a-9ba3-6fae43cdecdb",
+    "roomId": "17420dd8-e349-48f2-8c23-f70d225b539965f86381-878b-4b0a-9ba3-6fae43cdecdb"
+  }
+}
+```
+
+### Get my messages
+
+```http
+  GET /api/v1/messages
+```
+
+```http
+  Authorization: Bearer token
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "messages": [
+    {
+      "partnerId": "67f50ca0-e130-4a22-a3a4-5be09704ac72",
+      "partnerName": "Ryan Lee",
+      "partnerAvatar": null,
+      "messages": [
+        {
+          "uuid": "51b6c515-7929-4fe1-b023-619439bad3b0",
+          "content": "Perfect, I’ll stick to the dog's routine as closely as possible.",
+          "senderId": "132184ff-6218-44a7-a6ee-8f4eccd2dbc0",
+          "receiverId": "67f50ca0-e130-4a22-a3a4-5be09704ac72",
+          "createdAt": "2024-11-27T21:58:43.000Z",
+          "updatedAt": "2024-11-27T21:58:43.000Z"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Get messages from the a user and log in user
+
+```http
+  GET /api/v1/messages/:id
+```
+
+```http
+  Authorization: Bearer token
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "messages": [
+    {
+      "uuid": "51b6c515-7929-4fe1-b023-619439bad3b0",
+      "content": "Perfect, I’ll stick to the dog's routine as closely as possible.",
+      "senderId": "132184ff-6218-44a7-a6ee-8f4eccd2dbc0",
+      "receiverId": "67f50ca0-e130-4a22-a3a4-5be09704ac72",
+      "createdAt": "2024-11-27T21:58:43.000Z",
+      "updatedAt": "2024-11-27T21:58:43.000Z"
+    }
+  ]
+}
 ```
