@@ -3,7 +3,10 @@ const jwt = require('jsonwebtoken');
 const { User, Review, Service } = require('../../models/index');
 const { makeThumbnail } = require('../../utils/imageUtils');
 
-// Get all sitters
+/**
+ * Get all sitters
+ */
+
 const getSitters = async (req, res) => {
   try {
     const response = await User.findAll({
@@ -26,7 +29,9 @@ const getSitters = async (req, res) => {
   }
 };
 
-// Get a specific user with their received reviews and services offered
+/**
+ * Get a specific user with their received reviews and services offered
+ */
 const getUserById = async (req, res) => {
   try {
     const response = await User.findOne({
@@ -53,7 +58,9 @@ const getUserById = async (req, res) => {
   }
 };
 
-// Create new user
+/**
+ * Create new user
+ */
 const createUser = async (req, res) => {
   const { firstName, lastName, email, password, role, location } = req.body;
   const hashPassword = await argon2.hash(password);
@@ -89,7 +96,9 @@ const createUser = async (req, res) => {
   }
 };
 
-// Update user
+/**
+ * Update user
+ */
 const updateUser = async (req, res) => {
   // Get login user by token
   const { userId } = req.user;
@@ -129,7 +138,9 @@ const updateUser = async (req, res) => {
   }
 };
 
-// Update password
+/**
+ * Update user's password
+ */
 const updatePassword = async (req, res) => {
   try {
     const loginUser = req.user;
@@ -168,6 +179,9 @@ const searchForSitters = async (req, res) => {
           location: location,
           role: 'sitter',
         },
+        attributes: {
+          exclude: ['password'],
+        },
         include: [
           {
             model: Service,
@@ -175,6 +189,7 @@ const searchForSitters = async (req, res) => {
             where: {
               uuid: serviceId,
             },
+
             required: true,
           },
           {
@@ -190,6 +205,9 @@ const searchForSitters = async (req, res) => {
           location: location,
           role: 'sitter',
         },
+        attributes: {
+          exclude: ['password'],
+        },
         include: [
           {
             model: Review,
@@ -197,6 +215,7 @@ const searchForSitters = async (req, res) => {
             where: {
               rating: rating,
             },
+
             required: true,
           },
           {
