@@ -1,37 +1,83 @@
-const { Message } = require('../../models/index');
+const { Op } = require('sequelize');
 
-// Get log in user's message
+const { Message, User } = require('../../models/index');
+const { sendMessage } = require('../../config/socket');
+const { groupMessages } = require('../../utils/messageUtils');
+
+// Get log in user's message (including send and receive),group by senderId
 const getMyMessages = async (req, res) => {
   const loginUser = req.user;
   try {
-    const receivedMessages = await Message.findAll({
+    let messages = await Message.findAll({
       where: {
-        receiverId: loginUser.userId,
+        [Op.or]: [
+          { receiverId: loginUser.userId },
+          { senderId: loginUser.userId },
+        ],
       },
+      include: [
+        {
+          model: User,
+          as: 'sender',
+          attributes: ['uuid', 'firstName', 'lastName', 'avatar'],
+        },
+        {
+          model: User,
+          as: 'receiver',
+          attributes: ['uuid', 'firstName', 'lastName', 'avatar'],
+        },
+      ],
     });
-    const sentMessages = await Message.findAll({
-      where: {
-        senderId: loginUser.userId,
-      },
-    });
+    console.log(`LOGIN USER ID IS ${loginUser.userId}`);
+    // Group messages
+    messages = groupMessages(messages, loginUser.userId);
+    res.status(200).json({ success: true, messages });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// Create a message
-const createMessage = async (req, res) => {
-  const loginUser = req.user;
+/**
+ * Get message from a specific user
+ */
+const getMessagesFromId = async (req, res) => {
+  const { id } = req.params;
+  const { userId } = req.user;
+
   try {
-    const message = await Message.create({
-      content: req.body.content,
-      senderId: loginUser.userId,
-      receiverId: req.params.receiverId,
+    const messages = await Message.findAll({
+      where: {
+        [Op.or]: [
+          { receiverId: id, senderId: userId },
+          { senderId: id, receiverId: userId },
+        ],
+      },
     });
-    res.status(201).json(message);
+    // Sort messages by 'createdAt' to have a unified conversation flow
+    res.status(200).json({ success: true, messages });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-module.exports = { createMessage, getMyMessages };
+/**
+ * Create a message
+ */
+const createMessage = async (req, res) => {
+  const { userId } = req.user;
+  const { content } = req.body;
+  const receiverId = req.params.receiverId;
+  try {
+    const message = {
+      content: content,
+      senderId: userId,
+      receiverId: receiverId,
+    };
+    await sendMessage(message);
+    res.status(201).json({ success: true, message });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = { createMessage, getMyMessages, getMessagesFromId };

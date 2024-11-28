@@ -5,7 +5,7 @@ const Review = sequelize.define(
   'reviews',
   {
     uuid: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
       allowNull: false,
@@ -47,7 +47,7 @@ const Review = sequelize.define(
       },
     },
     bookingId: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: false,
       validate: {
         notEmpty: {
@@ -57,7 +57,7 @@ const Review = sequelize.define(
       },
     },
     reviewerId: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: false,
       validate: {
         notEmpty: {
@@ -67,7 +67,7 @@ const Review = sequelize.define(
       },
     },
     revieweeId: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: false,
       validate: {
         notEmpty: {

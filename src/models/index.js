@@ -5,8 +5,8 @@ const Review = require('./review.model');
 const Message = require('./message.model');
 
 // Service -> User relationship
-User.belongsToMany(Service, { through: 'User_Services' });
-Service.belongsToMany(User, { through: 'User_Services' });
+User.belongsToMany(Service, { through: 'user_services' });
+Service.belongsToMany(User, { through: 'user_services' });
 
 // User -> Booking association
 User.hasMany(Booking, { foreignKey: 'sitterId' });
@@ -16,11 +16,6 @@ Booking.belongsTo(User, { foreignKey: 'ownerId', as: 'owner' });
 
 // Service -> Booking (Service can have many bookings)
 Service.hasMany(Booking, { foreignKey: 'serviceId' });
-
-// User -> Message
-User.hasMany(Message);
-Message.belongsTo(User, { foreignKey: 'senderId' });
-Message.belongsTo(User, { foreignKey: 'receiverId' });
 
 // User -> Review
 User.hasMany(Review, { foreignKey: 'reviewerId', as: 'givenReviews' });
@@ -32,5 +27,11 @@ Review.belongsTo(User, { foreignKey: 'revieweeId', as: 'reviewee' });
 // Booking -> Review
 Review.belongsTo(Booking, { foreignKey: 'bookingId' });
 Booking.hasMany(Review, { foreignKey: 'bookingId' });
+
+// User -> Message
+User.hasMany(Message, { foreignKey: 'senderId', as: 'sendMessages' });
+User.hasMany(Message, { foreignKey: 'receiverId', as: 'receiveMessages' });
+Message.belongsTo(User, { foreignKey: 'senderId', as: 'sender' });
+Message.belongsTo(User, { foreignKey: 'receiverId', as: 'receiver' });
 
 module.exports = { User, Service, Booking, Review, Message };

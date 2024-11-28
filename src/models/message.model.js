@@ -5,7 +5,7 @@ const Message = sequelize.define(
   'messages',
   {
     uuid: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
       allowNull: false,
@@ -17,21 +17,30 @@ const Message = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: false,
       validate: {
-        notEmpty: true,
+        notEmpty: {
+          args: true,
+          msg: 'Content of message is not allowed to be null',
+        },
       },
     },
     senderId: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: false,
       validate: {
-        notEmpty: true,
+        notEmpty: {
+          args: true,
+          msg: 'Sender Id is not allowed to be null',
+        },
       },
     },
     receiverId: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
       allowNull: false,
       validate: {
-        notEmpty: true,
+        notEmpty: {
+          args: true,
+          msg: 'Receiver Id is not allowed to be null',
+        },
       },
     },
   },
